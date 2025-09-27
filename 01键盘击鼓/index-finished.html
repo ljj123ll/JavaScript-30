@@ -57,5 +57,14 @@
     <audio data-key="KeyJ" src="sounds/snare.wav"></audio>
     <audio data-key="KeyK" src="sounds/tom.wav"></audio>
     <audio data-key="KeyL" src="sounds/tink.wav"></audio>
+
+    <script>
+        window.addEventListener('keydown', function(e) {
+            const keyEl = document.querySelector(`div[data-key="${e.code}"]`);
+            const audioEl = document.querySelector(`audio[data-key="${e.code}"]`);
+            console.log(keyEl)
+            console.log(audioEl)
+        });
+    </script>
   </body>
 </html>
