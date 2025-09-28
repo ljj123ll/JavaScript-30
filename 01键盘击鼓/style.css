@@ -52,3 +52,42 @@ kbd {
     letter-spacing: 0.1rem;
     color: aquamarine;
 }
+
+#playBtn {
+    /* 脱离文档，通过bottom和left精准控制位置 */
+    position: absolute;
+    bottom: 10rem; /* 距离底部的距离，可根据需要调整 */
+    left: 50%;
+    transform: translateX(-50%); /* 水平居中 */
+    padding: 1.5rem 3rem;
+    font-size: 1.8rem;
+    background: rgba(0, 255, 255, 0.3);
+    color: white;
+    border: 0.2rem solid aquamarine;
+    border-radius: 0.5rem;
+    /* 鼠标悬浮时显示 “小手图标”，明确提示用户 “这是可点击的交互元素”（避免用户误以为是普通文字） */
+    cursor: pointer;
+    /* ease：缓慢动画，先慢再块后再慢 */
+    transition: all 0.3s ease;
+    /* 文字全大写  */
+    text-transform: uppercase;
+    /*文字间距增加 */
+    letter-spacing: 0.1rem;
+}
+
+#playBtn:hover {
+    background: rgba(0, 255, 255, 0.5);
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 0 1rem aquamarine;
+}
+
+/* 模拟按压的感觉 */
+#playBtn:active {
+    transform: translateX(-50%) scale(0.85);
+    box-shadow: 0 0 1rem rgb(246, 127, 8);
+}
+
+/* 确保body是相对定位的，这样按钮的绝对定位才有参照 */
+body {
+    position: relative;
+}

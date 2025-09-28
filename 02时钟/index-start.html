@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS + CSS Clock</title>
+  <link rel="icon" href="https://fav.farm/🔥" />
+</head>
+<body>
+    <div class="clock">
+      <div class="clock-face">
+        <!-- 时钟刻度 -->
+        <div class="mark mark-1"></div>
+        <div class="mark mark-2"></div>
+        <div class="mark mark-3"></div>
+        <div class="mark mark-4"></div>
+        <div class="mark mark-5"></div>
+        <div class="mark mark-6"></div>
+        <div class="mark mark-7"></div>
+        <div class="mark mark-8"></div>
+        <div class="mark mark-9"></div>
+        <div class="mark mark-10"></div>
+        <div class="mark mark-11"></div>
+        <div class="mark mark-12"></div>
+        
+        <!-- 时钟指针 -->
+        <div class="hand hour-hand"></div>
+        <div class="hand min-hand"></div>
+        <div class="hand second-hand"></div>
+        
+        <!-- 中心圆点 -->
+        <div class="center-dot"></div>
+      </div>
+    </div>
+
+  <style>
+    html {
+      background: #018DED url("时钟.jpg");
+      background-size: cover;
+      font-family: 'helvetica neue';
+      text-align: center;
+      font-size: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    .clock {
+      width: 30rem;
+      height: 30rem;
+      border: 20px solid white;
+      border-radius: 50%;
+      margin: 50px auto;
+      position: relative;
+      padding: 2rem;
+      box-shadow:
+        0 0 0 4px rgba(0,0,0,0.1),
+        inset 0 0 0 3px #EFEFEF,
+        inset 0 0 10px black,
+        0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .clock-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform: translateY(-3px); /* 调整指针高度的影响 */
+    }
+
+    .hand {
+      position: absolute;
+      top: 50%;
+      transform-origin: 100%; /* 指针绕右端旋转 */
+      transform: rotate(90deg); /* 初始指向12点 */
+      transition: all 0.05s;
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+    }
+
+    .hour-hand {
+      width: 35%;
+      height: 6px;
+      background: #333;
+      left: 15%; /* 让时针从中心开始 */
+    }
+
+    .min-hand {
+      width: 45%;
+      height: 4px;
+      background: #555;
+      left: 5%; /* 让分针从中心开始 */
+    }
+
+    .second-hand {
+      width: 50%;
+      height: 2px;
+      background: #ff4136;
+    }
+
+    .center-dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1.5rem;
+      height: 1.5rem;
+      background: #ff4136;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+
+    /* 时钟刻度样式 */
+    .mark {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    .mark::before {
+      content: '';
+      position: absolute;
+      top: 1rem;
+      left: 50%;
+      width: 0.5rem;
+      height: 1.5rem;
+      background: white;
+      transform: translateX(-50%);
+    }
+
+    /* 12个刻度的旋转角度 */
+    .mark-1 { transform: rotate(30deg); }
+    .mark-2 { transform: rotate(60deg); }
+    .mark-3 { transform: rotate(90deg); }
+    .mark-4 { transform: rotate(120deg); }
+    .mark-5 { transform: rotate(150deg); }
+    .mark-6 { transform: rotate(180deg); }
+    .mark-7 { transform: rotate(210deg); }
+    .mark-8 { transform: rotate(240deg); }
+    .mark-9 { transform: rotate(270deg); }
+    .mark-10 { transform: rotate(300deg); }
+    .mark-11 { transform: rotate(330deg); }
+    .mark-12 { transform: rotate(0deg); }
+
+    /* 3、6、9、12点的刻度更粗 */
+    .mark-3::before,
+    .mark-6::before,
+    .mark-9::before,
+    .mark-12::before {
+      width: 0.8rem;
+      height: 2rem;
+      background: #f0f0f0;
+    }
+
+    @media (max-width: 600px) {
+      .clock {
+        width: 20rem;
+        height: 20rem;
+        border-width: 15px;
+      }
+    }
+  </style>
+
+  <script>
+    // 获取指针元素
+    const secondHand = document.querySelector('.second-hand');
+    const minHand = document.querySelector('.min-hand');
+    const hourHand = document.querySelector('.hour-hand');
+
+    // 更新时钟函数
+    function setDate() {
+      const now = new Date();
+      
+      // 计算秒针角度
+      const seconds = now.getSeconds();
+      const secondsDegrees = ((seconds / 60) * 360) + 90;
+      secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+      
+      // 计算分针角度
+      const minutes = now.getMinutes();
+      const minutesDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6) + 90;
+      minHand.style.transform = `rotate(${minutesDegrees}deg)`;
+      
+      // 计算时针角度
+      const hours = now.getHours();
+      const hoursDegrees = ((hours % 12 / 12) * 360) + ((minutes / 60) * 30) + 90;
+      hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+    }
+
+    // 每秒更新一次时钟
+    setInterval(setDate, 1000);
+    // 页面加载时立即执行一次，避免初始延迟
+    setDate();
+  </script>
+</body>
+</html>

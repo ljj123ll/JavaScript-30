@@ -58,36 +58,256 @@
     <audio data-key="KeyK" src="sounds/tom.wav"></audio>
     <audio data-key="KeyL" src="sounds/tink.wav"></audio>
 
+    <button id="playBtn">播放歌曲</button>
+
     <script>
-        window.addEventListener('keydown', function(e) {
-            const keyEl = document.querySelector(`div[data-key="${e.code}"]`);
-            const audioEl = document.querySelector(`audio[data-key="${e.code}"]`);
-            // console.log(keyEl)
-            // console.log(audioEl)
-            if(!audioEl) return;
-            audioEl.currentTime = 0;
-            audioEl.play();
+    //   window.addEventListener("keydown", function (e) {
+    //     const keyEl = document.querySelector(`div[data-key="${e.code}"]`);
+    //     const audioEl = document.querySelector(`audio[data-key="${e.code}"]`);
+    //     // console.log(keyEl)
+    //     // console.log(audioEl)
+    //     if (!audioEl) return;
+    //     audioEl.currentTime = 0;
+    //     audioEl.play();
 
-            keyEl.classList.add('playing');
-            // 定时器解决方法
-            // 防抖：如果用户在70ms内再次触发按键事件，就会清除之前的定时器，重新开始倒计时
-            // if(keyEl.styleTimer) {
-            //     clearTimeout(keyEl.styleTimer);
-            // }
+    //     keyEl.classList.add("playing");
+    //     // 定时器解决方法
+    //     // 防抖：如果用户在70ms内再次触发按键事件，就会清除之前的定时器，重新开始倒计时
+    //     // if(keyEl.styleTimer) {
+    //     //     clearTimeout(keyEl.styleTimer);
+    //     // }
 
-            // keyEl.styleTimer = setTimeout(() => {
-            //     keyEl.classList.remove('playing');
-            // }, 70);
+    //     // keyEl.styleTimer = setTimeout(() => {
+    //     //     keyEl.classList.remove('playing');
+    //     // }, 70);
 
-            // 使用transitionend事件监听器
-            const allKeysEl = document.querySelectorAll(".key");
-            allKeysEl.forEach(key => {
-                key.addEventListener("transitionend",e => {
-                    key.classList.remove("playing")
-                })
-            })
-            
+    //     // 使用transitionend事件监听器
+    //     // const allKeysEl = document.querySelectorAll(".key");
+    //     // allKeysEl.forEach((key) => {
+    //     //   key.addEventListener("transitionend", (e) => {
+    //     //     key.classList.remove("playing");
+    //     //   });
+    //     // });
+    //   });
+
+
+      // 点击播放音乐
+      // 30秒流行音乐序列（120BPM，每拍500ms，共15小节=30000ms）
+      // 段落划分：主歌1(4小节,0-8000ms)→过渡1(2小节,8000-12000ms)→副歌(4小节,12000-20000ms)→过渡2(2小节,20000-24000ms)→主歌2(2小节,24000-28000ms)→结尾(1小节,28000-30000ms)
+      // 乐器说明：KeyD=底鼓(低频骨架)、KeyJ=军鼓(节拍强调)、KeyS=闭镲(节奏填充)、KeyF=开镲(过渡/高潮)、KeyK=嗵鼓(细节变化)、KeyG=低音鼓(增强低频)、KeyA=clap(高频点缀)、KeyL=tink(亮音收尾)
+      const song1 = [
+        // -------------------------- 主歌1（0-8000ms，舒缓铺垫，节奏清晰）--------------------------
+        // 第1小节（0-2000ms）：基础节奏启动
+        { time: 0, keys: ["KeyD", "KeyS"] }, // 第1拍：底鼓+闭镲（启动信号）
+        { time: 250, keys: ["KeyS"] }, // 第1.5拍：闭镲（八分音符填充）
+        { time: 500, keys: ["KeyJ", "KeyS"] }, // 第2拍：军鼓+闭镲（节拍强调）
+        { time: 750, keys: ["KeyS"] }, // 第2.5拍：闭镲
+        { time: 1000, keys: ["KeyD", "KeyS"] }, // 第3拍：底鼓+闭镲（重复第1拍，稳定节奏）
+        { time: 1250, keys: ["KeyS"] }, // 第3.5拍：闭镲
+        { time: 1500, keys: ["KeyJ", "KeyS"] }, // 第4拍：军鼓+闭镲（主歌核心节拍）
+        { time: 1750, keys: ["KeyS"] }, // 第4.5拍：闭镲
+
+        // 第2小节（2000-4000ms）：加入高频点缀
+        { time: 2000, keys: ["KeyD", "KeyS"] }, // 第5拍：底鼓+闭镲
+        { time: 2250, keys: ["KeyS"] }, // 第5.5拍：闭镲
+        { time: 2500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第6拍：军鼓+拍手（高频点缀，增强活力）
+        { time: 2750, keys: ["KeyS"] }, // 第6.5拍：闭镲
+        { time: 3000, keys: ["KeyD", "KeyS"] }, // 第7拍：底鼓+闭镲
+        { time: 3250, keys: ["KeyS"] }, // 第7.5拍：闭镲
+        { time: 3500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第8拍：军鼓+拍手
+        { time: 3750, keys: ["KeyS"] }, // 第8.5拍：闭镲
+
+        // 第3小节（4000-6000ms）：低频轻微变化
+        { time: 4000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第9拍：底鼓+低音鼓（增强低频厚度）
+        { time: 4250, keys: ["KeyS"] }, // 第9.5拍：闭镲
+        { time: 4500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第10拍：军鼓+拍手
+        { time: 4750, keys: ["KeyS"] }, // 第10.5拍：闭镲
+        { time: 5000, keys: ["KeyD", "KeyS"] }, // 第11拍：底鼓+闭镲
+        { time: 5250, keys: ["KeyS"] }, // 第11.5拍：闭镲
+        { time: 5500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第12拍：军鼓+拍手
+        { time: 5750, keys: ["KeyS"] }, // 第12.5拍：闭镲
+
+        // 第4小节（6000-8000ms）：主歌收尾，铺垫过渡
+        { time: 6000, keys: ["KeyD", "KeyS"] }, // 第13拍：底鼓+闭镲
+        { time: 6250, keys: ["KeyS"] }, // 第13.5拍：闭镲
+        { time: 6500, keys: ["KeyJ", "KeyS"] }, // 第14拍：军鼓+闭镲（减少拍手，准备过渡）
+        { time: 6750, keys: ["KeyS"] }, // 第14.5拍：闭镲
+        { time: 7000, keys: ["KeyD", "KeyS"] }, // 第15拍：底鼓+闭镲
+        { time: 7250, keys: ["KeyS"] }, // 第15.5拍：闭镲
+        { time: 7500, keys: ["KeyJ", "KeyS"] }, // 第16拍：军鼓+闭镲
+        { time: 7750, keys: ["KeyS", "KeyF"] }, // 第16.5拍：闭镲+开镲（过渡信号）
+
+        // -------------------------- 过渡1（8000-12000ms，节奏渐强，衔接副歌）--------------------------
+        // 第5小节（8000-10000ms）：低频加密，加入嗵鼓
+        { time: 8000, keys: ["KeyD", "KeyS"] }, // 第17拍：底鼓+闭镲
+        { time: 8250, keys: ["KeyD", "KeyS"] }, // 第17.5拍：底鼓+闭镲（底鼓加密，增强张力）
+        { time: 8500, keys: ["KeyK", "KeyS"] }, // 第18拍：嗵鼓+闭镲（节奏变化）
+        { time: 8750, keys: ["KeyD", "KeyS"] }, // 第18.5拍：底鼓+闭镲
+        { time: 9000, keys: ["KeyD", "KeyS"] }, // 第19拍：底鼓+闭镲
+        { time: 9250, keys: ["KeyD", "KeyS"] }, // 第19.5拍：底鼓+闭镲
+        { time: 9500, keys: ["KeyK", "KeyS"] }, // 第20拍：嗵鼓+闭镲
+        { time: 9750, keys: ["KeyD", "KeyF", "KeyS"] }, // 第20.5拍：底鼓+开镲（强化过渡）
+
+        // 第6小节（10000-12000ms）：高潮前蓄力
+        { time: 10000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第21拍：底鼓+低音鼓（低频拉满）
+        { time: 10250, keys: ["KeyS"] }, // 第21.5拍：闭镲
+        { time: 10500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第22拍：军鼓+拍手（增强律动感）
+        { time: 10750, keys: ["KeyS"] }, // 第22.5拍：闭镲
+        { time: 11000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第23拍：底鼓+低音鼓
+        { time: 11250, keys: ["KeyS"] }, // 第23.5拍：闭镲
+        { time: 11500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第24拍：军鼓+拍手
+        { time: 11750, keys: ["KeyF"] }, // 第24.5拍：单独开镲（副歌前停顿，制造期待）
+
+        // -------------------------- 副歌（12000-20000ms，节奏饱满，高频低频拉满）--------------------------
+        // 第7小节（12000-14000ms）：副歌启动，全乐器发力
+        { time: 12000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第25拍：底鼓+低音鼓+闭镲（低频爆发）
+        { time: 12250, keys: ["KeyD", "KeyS"] }, // 第25.5拍：底鼓+闭镲（底鼓加密）
+        { time: 12500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第26拍：军鼓+拍手（高频爆发）
+        { time: 12750, keys: ["KeyD", "KeyS"] }, // 第26.5拍：底鼓+闭镲
+        { time: 13000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第27拍：底鼓+低音鼓+闭镲
+        { time: 13250, keys: ["KeyD", "KeyS"] }, // 第27.5拍：底鼓+闭镲
+        { time: 13500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第28拍：军鼓+拍手
+        { time: 13750, keys: ["KeyD", "KeyS"] }, // 第28.5拍：底鼓+闭镲
+
+        // 第8小节（14000-16000ms）：副歌持续，加入细节变化
+        { time: 14000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第29拍：底鼓+低音鼓+闭镲
+        { time: 14250, keys: ["KeyD", "KeyS"] }, // 第29.5拍：底鼓+闭镲
+        { time: 14500, keys: ["KeyJ", "KeyA", "KeyK", "KeyS"] }, // 第30拍：军鼓+拍手+嗵鼓（多乐器叠加）
+        { time: 14750, keys: ["KeyD", "KeyS"] }, // 第30.5拍：底鼓+闭镲
+        { time: 15000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第31拍：底鼓+低音鼓+闭镲
+        { time: 15250, keys: ["KeyD", "KeyS"] }, // 第31.5拍：底鼓+闭镲
+        { time: 15500, keys: ["KeyJ", "KeyA", "KeyK", "KeyS"] }, // 第32拍：军鼓+拍手+嗵鼓
+        { time: 15750, keys: ["KeyD", "KeyS"] }, // 第32.5拍：底鼓+闭镲
+
+        // 第9小节（16000-18000ms）：副歌高潮，开镲点缀
+        { time: 16000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第33拍：底鼓+低音鼓+闭镲
+        { time: 16250, keys: ["KeyD", "KeyF", "KeyS"] }, // 第33.5拍：底鼓+开镲+闭镲（高潮点缀）
+        { time: 16500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第34拍：军鼓+拍手
+        { time: 16750, keys: ["KeyD", "KeyF", "KeyS"] }, // 第34.5拍：底鼓+开镲+闭镲
+        { time: 17000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第35拍：底鼓+低音鼓+闭镲
+        { time: 17250, keys: ["KeyD", "KeyF", "KeyS"] }, // 第35.5拍：底鼓+开镲+闭镲
+        { time: 17500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第36拍：军鼓+拍手
+        { time: 17750, keys: ["KeyD", "KeyF", "KeyS"] }, // 第36.5拍：底鼓+开镲+闭镲
+
+        // 第10小节（18000-20000ms）：副歌收尾，准备过渡
+        { time: 18000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第37拍：底鼓+低音鼓+闭镲
+        { time: 18250, keys: ["KeyD", "KeyS"] }, // 第37.5拍：底鼓+闭镲
+        { time: 18500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第38拍：军鼓+拍手
+        { time: 18750, keys: ["KeyD", "KeyS"] }, // 第38.5拍：底鼓+闭镲
+        { time: 19000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第39拍：底鼓+低音鼓+闭镲
+        { time: 19250, keys: ["KeyD", "KeyS"] }, // 第39.5拍：底鼓+闭镲
+        { time: 19500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第40拍：军鼓+拍手
+        { time: 19750, keys: ["KeyS", "KeyF"] }, // 第40.5拍：闭镲+开镲（过渡信号）
+
+        // -------------------------- 过渡2（20000-24000ms，节奏放缓，衔接主歌2）--------------------------
+        // 第11小节（20000-22000ms）：减少低频，回归舒缓
+        { time: 20000, keys: ["KeyD", "KeyS"] }, // 第41拍：底鼓+闭镲（恢复主歌节奏）
+        { time: 20250, keys: ["KeyS"] }, // 第41.5拍：闭镲
+        { time: 20500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第42拍：军鼓+拍手
+        { time: 20750, keys: ["KeyS"] }, // 第42.5拍：闭镲
+        { time: 21000, keys: ["KeyD", "KeyS"] }, // 第43拍：底鼓+闭镲
+        { time: 21250, keys: ["KeyS"] }, // 第43.5拍：闭镲
+        { time: 21500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第44拍：军鼓+拍手
+        { time: 21750, keys: ["KeyS"] }, // 第44.5拍：闭镲
+
+        // 第12小节（22000-24000ms）：加入嗵鼓，制造变化
+        { time: 22000, keys: ["KeyD", "KeyS"] }, // 第45拍：底鼓+闭镲
+        { time: 22250, keys: ["KeyS"] }, // 第45.5拍：闭镲
+        { time: 22500, keys: ["KeyJ", "KeyK", "KeyS"] }, // 第46拍：军鼓+嗵鼓（细节变化）
+        { time: 22750, keys: ["KeyS"] }, // 第46.5拍：闭镲
+        { time: 23000, keys: ["KeyD", "KeyS"] }, // 第47拍：底鼓+闭镲
+        { time: 23250, keys: ["KeyS"] }, // 第47.5拍：闭镲
+        { time: 23500, keys: ["KeyJ", "KeyK", "KeyS"] }, // 第48拍：军鼓+嗵鼓
+        { time: 23750, keys: ["KeyF"] }, // 第48.5拍：开镲（准备主歌2）
+
+        // -------------------------- 主歌2（24000-28000ms，简化节奏，呼应主歌1）--------------------------
+        // 第13小节（24000-26000ms）：主歌2启动，保留核心节奏
+        { time: 24000, keys: ["KeyD", "KeyS"] }, // 第49拍：底鼓+闭镲
+        { time: 24250, keys: ["KeyS"] }, // 第49.5拍：闭镲
+        { time: 24500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第50拍：军鼓+拍手
+        { time: 24750, keys: ["KeyS"] }, // 第50.5拍：闭镲
+        { time: 25000, keys: ["KeyD", "KeyS"] }, // 第51拍：底鼓+闭镲
+        { time: 25250, keys: ["KeyS"] }, // 第51.5拍：闭镲
+        { time: 25500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第52拍：军鼓+拍手
+        { time: 25750, keys: ["KeyS"] }, // 第52.5拍：闭镲
+
+        // 第14小节（26000-28000ms）：主歌2收尾，准备结尾
+        { time: 26000, keys: ["KeyD", "KeyG", "KeyS"] }, // 第53拍：底鼓+低音鼓（最后低频强调）
+        { time: 26250, keys: ["KeyS"] }, // 第53.5拍：闭镲
+        { time: 26500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第54拍：军鼓+拍手
+        { time: 26750, keys: ["KeyS"] }, // 第54.5拍：闭镲
+        { time: 27000, keys: ["KeyD", "KeyS"] }, // 第55拍：底鼓+闭镲
+        { time: 27250, keys: ["KeyS"] }, // 第55.5拍：闭镲
+        { time: 27500, keys: ["KeyJ", "KeyS"] }, // 第56拍：军鼓+闭镲（减少拍手，准备结尾）
+        { time: 27750, keys: ["KeyS"] }, // 第56.5拍：闭镲
+
+        // -------------------------- 结尾（28000-30000ms，节奏收束，完美收尾）--------------------------
+        // 第15小节（28000-30000ms）：最后2秒，从密集到停顿
+        { time: 28000, keys: ["KeyD", "KeyS"] }, // 第57拍：底鼓+闭镲
+        { time: 28250, keys: ["KeyS"] }, // 第57.5拍：闭镲
+        { time: 28500, keys: ["KeyJ", "KeyA", "KeyS"] }, // 第58拍：军鼓+拍手（最后强调）
+        { time: 28750, keys: ["KeyS"] }, // 第58.5拍：闭镲
+        { time: 29000, keys: ["KeyD", "KeyS"] }, // 第59拍：底鼓+闭镲
+        { time: 29250, keys: [] }, // 第59.5拍：空拍（制造停顿感）
+        { time: 29500, keys: ["KeyJ", "KeyA"] }, // 第60拍：军鼓+拍手（最后轻拍）
+        { time: 30000, keys: ["KeyD", "KeyF", "KeyL"] }, // 第61拍：底鼓+开镲+亮音（强力收尾，余音绕梁）
+      ];
+
+      // 2. 初始化变量（防重复播放锁）
+      let isPlaying = false;
+
+      // 3. 一次性绑定“样式移除”事件（手动/自动播放共用）
+      document.querySelectorAll(".key").forEach((key) => {
+        key.addEventListener("transitionend", () => {
+          key.classList.remove("playing");
         });
+      });
+
+      // 4. 封装“播放单个/多个音符”的函数（适配多音同时播）
+      function playNotes(keys) {
+        // 遍历当前时间点的所有key，同时播放
+        keys.forEach((key) => {
+          const audioEl = document.querySelector(`audio[data-key="${key}"]`);
+          const keyEl = document.querySelector(`div[data-key="${key}"]`);
+
+          if (!audioEl || !keyEl) return; // 容错：跳过不存在的元素
+
+          // 音频从头播放（避免叠加延迟）
+          audioEl.currentTime = 0;
+          audioEl.play().catch((err) => {
+            console.log("音频播放提示：", err); // 兼容浏览器安全策略
+          });
+
+          // 同步触发按键样式（多音同时亮，视觉更直观）
+          keyEl.classList.add("playing");
+        });
+      }
+
+      // 5. 按钮点击播放逻辑（适配新的多音数据结构）
+      document.getElementById("playBtn").addEventListener("click", () => {
+        if (isPlaying) return; // 防重复：正在播放时不响应
+        isPlaying = true;
+
+        // 歌曲总时长（取最后一个时间点+100ms，确保结尾音播放完）
+        const totalDuration = song1[song1.length - 1].time + 100;
+
+        // 遍历音乐序列，按时间点播放
+        song1.forEach((note) => {
+          setTimeout(() => {
+            playNotes(note.keys); // 传入当前时间点的所有key
+          }, note.time);
+        });
+
+        // 播放结束后解锁
+        setTimeout(() => {
+          isPlaying = false;
+        }, totalDuration);
+      });
+
+      // 保留原有的“手动按键盘”功能（复用playNotes，支持同时按多个键）
+      window.addEventListener("keydown", function (e) {
+        playNotes([e.code]); // 手动按键时，传入单个key数组
+      });
     </script>
   </body>
 </html>
