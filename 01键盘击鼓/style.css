@@ -35,10 +35,10 @@ body,html {
     text-shadow: 0 0 0.5rem black;
 }
 
-.palying {
-    transform: scale(1.1);
+.playing {
     border-color: aquamarine;
     box-shadow: 0 0 1rem aquamarine;
+    transform: scale(1.1);
 }
 
 kbd {

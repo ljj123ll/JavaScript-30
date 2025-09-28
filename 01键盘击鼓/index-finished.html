@@ -62,8 +62,31 @@
         window.addEventListener('keydown', function(e) {
             const keyEl = document.querySelector(`div[data-key="${e.code}"]`);
             const audioEl = document.querySelector(`audio[data-key="${e.code}"]`);
-            console.log(keyEl)
-            console.log(audioEl)
+            // console.log(keyEl)
+            // console.log(audioEl)
+            if(!audioEl) return;
+            audioEl.currentTime = 0;
+            audioEl.play();
+
+            keyEl.classList.add('playing');
+            // 定时器解决方法
+            // 防抖：如果用户在70ms内再次触发按键事件，就会清除之前的定时器，重新开始倒计时
+            // if(keyEl.styleTimer) {
+            //     clearTimeout(keyEl.styleTimer);
+            // }
+
+            // keyEl.styleTimer = setTimeout(() => {
+            //     keyEl.classList.remove('playing');
+            // }, 70);
+
+            // 使用transitionend事件监听器
+            const allKeysEl = document.querySelectorAll(".key");
+            allKeysEl.forEach(key => {
+                key.addEventListener("transitionend",e => {
+                    key.classList.remove("playing")
+                })
+            })
+            
         });
     </script>
   </body>
