@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- HTML5文档类型声明 -->
+<html lang="zh-CN">
+  <head>
+    <!-- 元数据标签：设置字符集为UTF-8，确保中文正常显示 -->
+    <meta charset="UTF-8" />
+    <!-- 网页标题：显示在浏览器标签页 -->
+    <title>HTTP实战</title>
+    <!-- 引入CSS样式表：链接到同目录下的style.css文件 -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- 主容器：用于居中显示页面内容 -->
+    <div class="container">
+      <!-- 页面标题：显示HTTP演示主题 -->
+      <h1>HTTP核心知识点演示</h1>
+    </div>
+
+    <!-- GET请求模块：演示HTTP GET请求方法和内容协商 -->
+    <div class="module">
+      <h2>1. GET请求演示（获取数据）</h2>
+      <p>选择响应格式：</p>
+      <!-- 按钮：发送Accept头为application/json的GET请求 -->
+      <button onclick="sendGetRequest('application/json')">
+        获取JSON格式数据
+      </button>
+      <!-- 按钮：发送Accept头为text/html的GET请求 -->
+      <button onclick="sendGetRequest('text/html')">获取HTML格式数据</button>
+    </div>
+
+    <!-- POST请求模块：演示HTTP POST请求方法和请求体提交 -->
+    <div class="module">
+      <h2>2. POST请求演示（提交数据）</h2>
+      <!-- 表单组：包含输入框和提交按钮 -->
+      <div class="form-group">
+        <!-- 用户名输入框 -->
+        <input type="text" id="post-username" placeholder="请输入用户名" />
+        <!-- 留言输入框 -->
+        <input type="text" id="post-message" placeholder="请输入留言" />
+        <!-- 提交按钮：触发sendPostRequest()函数 -->
+        <button onclick="sendPostRequest()">提交POST数据</button>
+      </div>
+    </div>
+
+    <!-- 状态码演示模块：展示不同HTTP状态码的处理 -->
+    <div class="module">
+      <h2>3. 状态码演示</h2>
+      <!-- 按钮：触发404状态码（资源不存在） -->
+      <button onclick="sendRequest('/api/not-found')">触发404，资源不存在</button>
+      <!-- 按钮：触发500状态码（服务器内部错误） -->
+      <button onclick="sendRequest('/api/server-error')">触发500，服务器错误</button>
+      <!-- 按钮：触发302状态码（临时重定向） -->
+      <button onclick="sendRequest('/api/redirect')">触发302，重定向</button>
+    </div>
+
+    <!-- 无状态与Cookie演示模块：展示HTTP无状态特性和Cookie状态管理 -->
+    <div class="module">
+      <h2>4. 无状态与Cookie演示（登录状态）</h2>
+      <!-- 登录表单组 -->
+      <div class="form-group">
+        <!-- 登录用户名输入框 -->
+        <input type="text" id="login-username" placeholder="输入用户名登录" />
+        <!-- 登录按钮：触发login()函数 -->
+        <button onclick="login()">登录</button>
+        <!-- 状态检查按钮：触发getUserStatus()函数 -->
+        <button onclick="getUserStatus()">检查登录状态</button>
+      </div>
+    </div>
+
+    <!-- 响应结果区域：用于显示HTTP请求的响应信息 -->
+    <div class="response-area">
+      <h2>响应结果</h2>
+      <!-- 状态码显示区域 -->
+      <div class="result-item">
+        <strong>状态码：</strong><span id="status-code">-</span>
+      </div>
+      <!-- 响应头显示区域 -->
+      <div class="result-item">
+        <strong>响应头：</strong><span id="content-type">-</span>
+      </div>
+      <!-- 响应体显示区域 -->
+      <div class="result-item">
+        <strong>响应体：</strong><span id="response-body">-</span>
+      </div>
+    </div>
+
+    <!-- 引入JavaScript文件：包含所有HTTP请求相关的交互逻辑 -->
+    <script src="fetch.js"></script>
+  </body>
+</html>
